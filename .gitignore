@@ -1,0 +1,6 @@
+#binarios y objetos de cmajke
+build/
+.cmake/
+
+#configuraciones locales
+*.user
