@@ -7,6 +7,107 @@ Window {
     height: 480
     visible: true
     title: qsTr("Kalculadora")
+    //definicion de variables para manipular visual
+    property string funcionActiva: "";
+    property string baseLog: "";
+    property string argLog: "";
+
+    //una funcion que va a procesar las teclas ingresadas
+    function procesarEntrada(botonPresionado)
+    {
+
+       /* switch(botonPresionado)
+        {
+            case "logx()":
+                funcionActiva = "log"
+                baseLog = ""
+                argLog = ""
+                pantallaPrincipal.text = "log_? (?)"
+                break;
+            case "*10^x":
+                pantallaPrincipal.text = "*10^"
+                break;
+            case ""
+
+        } */
+
+        //teclado de funciones cientificas
+        if(botonPresionado === "logx()")
+        {
+            funcionActiva = "log"
+            baseLog = ""
+            argLog = ""
+            pantallaPrincipal.text = "log_? (?)"
+        }
+
+        if(funcionActiva == "log" && botonPresionado !== "logx()")
+        {
+            if(baseLog == "") //si no hay base, tome el primer numero de entrada
+            {
+                baseLog = botonPresionado
+                pantallaPrincipal.text = "log_" + baseLog + " (?)"
+                botonPresionado = ""
+            }
+            else if(argLog == "") // si ya hay base, pero no argumento
+            {
+                argLog = botonPresionado
+                pantallaPrincipal.text = "log_" + baseLog + " " + "(" + argLog + ")"
+                funcionActiva = "" // limpio la funcion guardada
+                botonPresionado = ""
+            }
+        }
+        /* else
+        {
+            pantallaPrincipal.text+= botonPresionado
+        } */
+
+        //teclado de numeros
+        if(botonPresionado === "*10^x")
+        {
+            pantallaPrincipal.text += "*10^"
+        }
+
+        //teclado de opciones y operadores
+        if(botonPresionado === "AC")
+        {
+            pantallaPrincipal.text = "" //borra todo
+        }
+        else if(botonPresionado === "DEL")
+        {
+            pantallaPrincipal.text = pantallaPrincipal.text.slice(0, -1) //borra el ultimo elemento
+        }
+        else if(botonPresionado === "=")
+        {
+            //logica qe llama a c++ ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
+        } /*
+        else if(botonPresionado.includes(["+", "-", "*", "/"]))
+        {
+            pantallaPrincipal.text += " " + botonPresionado + " "
+        } */
+
+        //donde gestiono que muestro
+        switch(botonPresionado)
+        {
+            case "+":
+            case "-":
+            case "*":
+            case "/":
+                pantallaPrincipal.text += " " + botonPresionado + " "
+                break;
+            case "AC":
+            case "DEL":
+            case "=":
+            case "ANS":
+            case "logx()":
+                botonPresionado = "";
+            break;
+            case "*10^x":
+                pantallaPrincipal.text += "x10^"
+                break;
+            default:
+                pantallaPrincipal.text += botonPresionado;
+        }
+    }
 
     ColumnLayout {
         anchors.fill: parent
@@ -49,7 +150,36 @@ Window {
                         Layout.preferredHeight: 40
 
                         onClicked: {
-                            pantallaPrincipal.text+=modelData
+                            //van a ocurrir muchas cosas aca para manejar las salidas visuales y la logica detras
+                            /* if(modelData === "logx()")
+                            {
+                                funcionActiva = "log"
+                                baseLog = ""
+                                argLog = ""
+                                pantallaPrincipal.text = "log_? (?)"
+                            }
+
+                            if(funcionActiva == "log")
+                            {
+                                if(baseLog == "") //si no hay base, tome el primer numero de entrada
+                                {
+                                    baseLog = modelData
+                                    pantallaPrincipal.text = "log_" + baseLog + " (?)"
+                                }
+                                else if(argLog == "") // si ya hay base, pero no argumento
+                                {
+                                    argLog = modelData
+                                    pantallaPrincipal.text = "log_" + baseLog + " " + "(" + argLog + ")"
+                                    funcionActiva = "" // limpio la funcion guardada
+                                }
+                            }
+                            else
+                            {
+                                pantallaPrincipal.text+= modelData
+                            } */
+
+                            //pantallaPrincipal.text+=modelData
+                            procesarEntrada(modelData)
                         }
                     }
                 }
@@ -63,7 +193,7 @@ Window {
 
                 // el repetidor itera sobre una lista de textos para los bootnes
                 Repeater {
-                    model: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ".", "x10^x"]
+                    model: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ".", "*10^x"]
 
                     //duplicar por cada elemento de la lista anterior
                     Button {
@@ -92,8 +222,14 @@ Window {
 
                         // un comportamiento general para los botones
                         onClicked: {
-                            console.log("Presionaste el botón: " + text)
-                            pantallaPrincipal.text+=modelData
+                            //console.log("Presionaste el botón: " + text)
+                            /*if(modelData === "*10^x")
+                            {
+                                pantallaPrincipal.text += "*10^"
+                            }
+                            else
+                                pantallaPrincipal.text += modelData; */
+                            procesarEntrada(modelData)
                         }
                     }
                 }
@@ -102,7 +238,7 @@ Window {
             GridLayout {
                 columns: 2
                 Repeater {
-                    model: ["DEL", "AC", "X", "/", "+", "-", "ANS", "="]
+                    model: ["DEL", "AC", "*", "/", "+", "-", "ANS", "="]
 
                     Button {
                         text: modelData
@@ -133,7 +269,26 @@ Window {
 
                         onClicked: {
                             //console.log("Presionaste el botón")
-                            pantallaPrincipal.text+=modelData
+                            //como es con js, puedo controlar con un if else sencillo
+                            //incluso, puedo prosar las entradas mejor de forma global llamando una funcion
+                            /*
+                            if(modelData === "AC")
+                            {
+                                pantallaPrincipal.text = "" //borra todo
+                            }
+                            else if(modelData === "DEL")
+                            {
+                                pantallaPrincipal.text = pantallaPrincipal.text.slice(0, -1) //borra el ultimo elemento
+                            }
+                            else if(modelData === "=")
+                            {
+                                //logica qe llama a c++
+                            }
+                            else
+                            {
+                                pantallaPrincipal.text += " " + modelData + " "
+                            } */
+                            procesarEntrada(modelData)
                         }
                     }
                 }
