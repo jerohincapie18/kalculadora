@@ -37,7 +37,12 @@ Window {
             funcionActiva = "log"
             baseLog = ""
             argLog = ""
-            pantallaPrincipal.text = "log_? (?)"
+            pantallaPrincipal.text += "log_? (?)"
+        }
+        else if(botonPresionado.includes("("))
+        {
+            funcionActiva = botonPresionado.replace(")", "")
+            pantallaPrincipal.text += funcionActiva
         }
 
         if(funcionActiva == "log" && botonPresionado !== "logx()")
@@ -60,12 +65,6 @@ Window {
         {
             pantallaPrincipal.text+= botonPresionado
         } */
-
-        //teclado de numeros
-        if(botonPresionado === "*10^x")
-        {
-            pantallaPrincipal.text += "*10^"
-        }
 
         //teclado de opciones y operadores
         if(botonPresionado === "AC")
@@ -99,10 +98,31 @@ Window {
             case "=":
             case "ANS":
             case "logx()":
+            case "D <--> S":
+            case "D <--> B":
+            case "ln()":
+            case "sen()":
+            case "cos()":
+            case "tan()":
+            case "sen()^-1":
+            case "cos()^-1":
+            case "tan()^-1":
                 botonPresionado = "";
             break;
             case "*10^x":
                 pantallaPrincipal.text += "x10^"
+                break;
+            case "x^2":
+                pantallaPrincipal.text += "^2";
+                break;
+            case "x^y":
+                pantallaPrincipal.text += "^";
+                break;
+            case "x!":
+                pantallaPrincipal.text += "!";
+                break;
+            case "1/x":
+                pantallaPrincipal.text += "1/";
                 break;
             default:
                 pantallaPrincipal.text += botonPresionado;
@@ -136,7 +156,7 @@ Window {
 
                 Repeater {
                     //sqrt() reemplazado por el icono
-                    model: ["sqrt()", "nroot()", "x^2", "x^y", "logx()", "ln()", "sen()", "cos()", "tan()", "sen^-1()", "cos^-1()", "tan^-1()", "D <--> S", "D <--> B", "x!", "e", "pi", "1/x", "(", ")"]
+                    model: ["sqrt()", "xroot()", "x^2", "x^y", "logx()", "ln()", "sen()", "cos()", "tan()", "sen^-1()", "cos^-1()", "tan^-1()", "D <--> S", "D <--> B", "x!", "e", "pi", "1/x", "(", ")"]
                     Button {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
